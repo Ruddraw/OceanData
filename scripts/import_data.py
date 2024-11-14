@@ -2,7 +2,7 @@ import pandas as pd
 from dashboard.models import MonitoringLocation, WaterQualityMeasurement
 
 def run():
-  data = pd.read_csv('Data/Surface_Water_Quality_Monitoring_Network_Grab_Sample_Water_Quality_Data.csv')
+  data = pd.read_csv('source/oceanData.csv')
   data = data.fillna('')  # Replace NaN values for easy handling
 
   for _, row in data.iterrows():
