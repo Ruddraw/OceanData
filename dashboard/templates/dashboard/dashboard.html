@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Water Quality Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.9/flatpickr.min.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f0f2f5;
+    }
+    h1 {
+      color: #2c3e50;
+      text-align: center;
+    }
+    form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    label {
+      font-weight: bold;
+      color: #34495e;
+    }
+    input, select, button {
+      padding: 8px;
+      border-radius: 4px;
+      border: 1px solid #bdc3c7;
+    }
+    button {
+      background-color: #3498db;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #2980b9;
+    }
+    h2, h3 {
+      color: #34495e;
+    }
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+    ul li {
+      background-color: #ecf0f1;
+      margin: 5px 0;
+      padding: 10px;
+      border-radius: 4px;
+    }
+    .season-buttons {
+      display: flex;
+      gap: 5px;
+      justify-content: center;
+      margin: 15px 0;
+    }
+    .season-buttons button {
+      padding: 8px 12px;
+      border-radius: 4px;
+      background-color: #2ecc71;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    .season-buttons button:hover {
+      background-color: #27ae60;
+    }
+  </style>
+</head>
+<body>
+  <h1>Water Quality Dashboard</h1>
+
+  <form method="get">
+    <label for="location">Location:</label>
+    <input type="text" name="location" id="location">
+    
+    <label for="start_date">Start Date:</label>
+    <input type="text" name="start_date" id="start-date" placeholder="Select Start Date">
+    
+    <label for="end_date">End Date:</label>
+    <input type="text" name="end_date" id="end-date" placeholder="Select End Date">
+
+    <label for="characteristic">Characteristic:</label>
+    <select name="characteristic" id="characteristic">
+      <option value="Temperature, water">Temperature</option>
+      <option value="Dissolved oxygen (DO)">Dissolved Oxygen</option>
+      <option value="pH">pH</option>
+      <option value="Conductivity">Conductivity</option>
+      <option value="Turbidity">Turbidity</option>
+    </select>
+    
+    <button type="submit">Filter</button>
+  </form>
+
+  <!-- Seasonal Filter Buttons -->
+  <div class="season-buttons">
+    <button type="button" onclick="setSeason('Winter')">Winter</button>
+    <button type="button" onclick="setSeason('Spring')">Spring</button>
+    <button type="button" onclick="setSeason('Summer')">Summer</button>
+    <button type="button" onclick="setSeason('Fall')">Fall</button>
+  </div>
+
+  <h2>{{ characteristic }} Over Time</h2>
+  <div>{{ chart|safe }}</div>
+
+  <h3>Anomalies Detected:</h3>
+  <ul>
+    {% for anomaly in anomalies %}
+      <li>{{ anomaly.location.location_name }} on {{ anomaly.date }} - {{ anomaly.characteristic_name }}: {{ anomaly.result_value }} {{ anomaly.result_unit }}</li>
+    {% endfor %}
+  </ul>
+
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script>
+    // Initialize Flatpickr with date limits
+    flatpickr("#start-date", { maxDate: "2023-12-31" });
+    flatpickr("#end-date", { maxDate: "2023-12-31" });
+
+    // JavaScript function to set seasonal dates
+    function setSeason(season) {
+      const startInput = document.getElementById('start-date');
+      const endInput = document.getElementById('end-date');
+      
+      const currentYear = new Date().getFullYear();
+
+      let startDate, endDate;
+      switch(season) {
+        case 'Winter':
+          startDate = `${currentYear - 1}-12-21`;
+          endDate = `${currentYear}-03-20`;
+          break;
+        case 'Spring':
+          startDate = `${currentYear}-03-21`;
+          endDate = `${currentYear}-06-20`;
+          break;
+        case 'Summer':
+          startDate = `${currentYear}-06-21`;
+          endDate = `${currentYear}-09-22`;
+          break;
+        case 'Fall':
+          startDate = `${currentYear}-09-23`;
+          endDate = `${currentYear}-12-20`;
+          break;
+      }
+
+      startInput.value = startDate;
+      endInput.value = endDate;
+    }
+  </script>
+</body>
+</html>

@@ -9,7 +9,9 @@ def dashboard_view(request):
   end_date = request.GET.get('end_date')
   characteristic = request.GET.get('characteristic', 'Temperature, water')
 
+  # Filter measurements based on the provided query parameters
   measurements = WaterQualityMeasurement.objects.filter(characteristic_name=characteristic)
+  
   if location:
     measurements = measurements.filter(location__location_id=location)
   if start_date and end_date:
@@ -18,13 +20,15 @@ def dashboard_view(request):
   # Anomaly Detection
   anomalies = detect_anomalies(measurements)
 
-  # Plot data
+  # Prepare data for Plotly chart
   dates = [m.date for m in measurements]
   values = [m.result_value for m in measurements]
+  
   fig = px.line(x=dates, y=values, title=f"{characteristic} Over Time")
   chart = fig.to_html()
 
-  return render(request, 'dashboard.html', {'chart': chart, 'anomalies': anomalies})
+  # Render the template with the chart and anomalies
+  return render(request, 'dashboard/dashboard.html', {'chart': chart, 'anomalies': anomalies})
 
 def detect_anomalies(measurements):
   anomalies = []
