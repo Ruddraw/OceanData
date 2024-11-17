@@ -260,16 +260,26 @@
     <div>{{ chart|safe }}</div>
 
     <h3>Anomalies Detected</h3>
-    <ul>
-      {% for anomaly in anomalies %}
-        <li class="card">
-          <h4>Location: {{ anomaly.location.location_name }}</h4>
-          <p><strong>Date:</strong> {{ anomaly.date }}</p>
-          <p><strong>Characteristic:</strong> {{ anomaly.characteristic_name }}</p>
-          <p><strong>Result:</strong> {{ anomaly.result_value }} {{ anomaly.result_unit }}</p>
-        </li>
-      {% endfor %}
-    </ul>
+    {% if anomalies %}
+        <p>{{ anomalies|length }} anomalies detected.</p>
+        <ul>
+            {% for anomaly in anomalies|slice:":10" %} <!-- Show only the first 10 anomalies -->
+                <li class="card">
+                    <h4>Location: {{ anomaly.location.location_name }}</h4>
+                    <p><strong>Date:</strong> {{ anomaly.date }}</p>
+                    <p><strong>Characteristic:</strong> {{ anomaly.characteristic_name }}</p>
+                    <p><strong>Result:</strong> {{ anomaly.result_value }} {{ anomaly.result_unit }}</p>
+                </li>
+            {% endfor %}
+        </ul>
+        {% if anomalies|length > 10 %}
+            <p>Showing 10 of {{ anomalies|length }} anomalies. Please refine your filters for more details.</p>
+        {% endif %}
+    {% else %}
+        <p>No anomalies detected for the selected filters.</p>
+    {% endif %}
+
+
   </main>
 
   <footer>

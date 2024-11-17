@@ -10,43 +10,41 @@ def dashboard_view(request):
     year = request.GET.get('year')
     season = request.GET.get('season')
 
+    # Step 1: Filter measurements by characteristic name
     measurements = WaterQualityMeasurement.objects.filter(characteristic_name=characteristic)
 
-    # Apply location filter
+    # Step 2: Apply filters for location, date range, year, and season
     if location:
         measurements = measurements.filter(location__location_id=location)
 
-    # Apply date range filter if valid
     if date_range:
         start_date, end_date = parse_date_range(date_range)
         if start_date and end_date:
             measurements = measurements.filter(date__range=[start_date, end_date])
-        else:
-            print("Invalid date range provided")
     elif year and season:
         season_start, season_end = get_season_dates(int(year), season)
         if season_start and season_end:
             measurements = measurements.filter(date__range=[season_start, season_end])
-        else:
-            print(f"Invalid season or year: {season}, {year}")
 
     print(f"Filtered measurements count: {measurements.count()}")
 
-    # Anomaly Detection
-    anomalies = detect_anomalies(measurements)
+    # Step 3: Detect anomalies
+    anomalies = detect_anomalies(measurements)  # Call your anomaly detection function here
 
-    # Plot data
+    # Step 4: Prepare data for plotting
     dates = [m.date for m in measurements]
     values = [m.result_value for m in measurements]
     fig = px.line(x=dates, y=values, title=f"{characteristic} Over Time")
     chart = fig.to_html()
 
+    # Step 5: Render the template with filtered data and detected anomalies
     return render(request, 'dashboard/dashboard.html', {
         'chart': chart,
-        'anomalies': anomalies,
+        'anomalies': anomalies,  # Include anomalies in the context
         'selected_year': year,
         'selected_season': season,
     })
+
 
 
 def parse_date_range(date_range):
@@ -72,13 +70,35 @@ def get_season_dates(year, season):
     return season_mapping.get(season, (None, None))
 
 def detect_anomalies(measurements):
-  anomalies = []
-  if measurements.exists():
-    values = [m.result_value for m in measurements if m.result_value is not None]
-    if values:
-      mean_value = np.mean(values)
-      std_dev = np.std(values)
-      for m in measurements:
-        if m.result_value and (m.result_value < mean_value - 2 * std_dev or m.result_value > mean_value + 2 * std_dev):
-          anomalies.append(m)
-  return anomalies
+    """
+    Detect anomalies in the provided measurements. Anomalies are defined as values
+    outside 2 standard deviations from the mean.
+
+    Args:
+        measurements (QuerySet): A Django QuerySet of `WaterQualityMeasurement`.
+
+    Returns:
+        list: A list of anomalous measurements.
+    """
+    anomalies = []
+
+    if measurements.exists():
+        # Collect values as a NumPy array for efficient computation
+        values = np.array([m.result_value for m in measurements if m.result_value is not None])
+
+        if values.size > 0:  # Ensure there are valid values to process
+            mean_value = np.mean(values)
+            std_dev = np.std(values)
+
+            lower_limit = mean_value - 2 * std_dev
+            upper_limit = mean_value + 2 * std_dev
+
+            # Filter measurements for anomalies
+            anomalies = measurements.filter(
+                result_value__lt=lower_limit
+            ) | measurements.filter(
+                result_value__gt=upper_limit
+            )
+
+    return anomalies
+
