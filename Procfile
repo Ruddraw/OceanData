@@ -1,0 +1,1 @@
+web gunicorn OCEANDATA.wsgi:application --log-file -
