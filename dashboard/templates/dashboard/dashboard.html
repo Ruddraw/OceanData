@@ -285,31 +285,32 @@
     });
 
     function setSeason(season) {
-      const dateRangeInput = document.getElementById('date-range');
-      const currentYear = new Date().getFullYear();
-      let startDate, endDate;
+    const dateRangeInput = document.getElementById('date-range');
+    const year = 2023; // Restricting to 2023 as the dataset is up to 2023
+    let startDate, endDate;
 
-      switch (season) {
-        case 'Winter':
-          startDate = `${currentYear - 1}-12-21`;
-          endDate = `${currentYear}-03-20`;
-          break;
-        case 'Spring':
-          startDate = `${currentYear}-03-21`;
-          endDate = `${currentYear}-06-20`;
-          break;
-        case 'Summer':
-          startDate = `${currentYear}-06-21`;
-          endDate = `${currentYear}-09-22`;
-          break;
-        case 'Fall':
-          startDate = `${currentYear}-09-23`;
-          endDate = `${currentYear}-12-20`;
-          break;
-      }
-
-      dateRangeInput.value = `${startDate} to ${endDate}`;
+    switch (season) {
+      case 'Winter':
+        startDate = `${year - 1}-12-21`; // Winter starts in December of the previous year
+        endDate = `${year}-03-20`;
+        break;
+      case 'Spring':
+        startDate = `${year}-03-21`;
+        endDate = `${year}-06-20`;
+        break;
+      case 'Summer':
+        startDate = `${year}-06-21`;
+        endDate = `${year}-09-22`;
+        break;
+      case 'Fall':
+        startDate = `${year}-09-23`;
+        endDate = `${year}-12-20`;
+        break;
     }
+
+    // Set the date range for the input field
+    dateRangeInput.value = `${startDate} to ${endDate}`;
+  }
 
     document.addEventListener("DOMContentLoaded", () => {
       const cards = document.querySelectorAll(".card");
