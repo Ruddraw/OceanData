@@ -34,6 +34,15 @@ def dashboard_view(request):
     # Step 4: Prepare data for plotting
     dates = [m.date for m in measurements]
     values = [m.result_value for m in measurements]
+
+    if not dates or not values:
+        return render(request, 'dashboard/dashboard.html', {
+            'chart': '<p>No data available for the selected filters.</p>',
+            'anomalies': [],
+            'selected_year': year,
+            'selected_season': season,
+        })
+
     fig = px.line(x=dates, y=values, title=f"{characteristic} Over Time")
     chart = fig.to_html()
 
