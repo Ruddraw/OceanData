@@ -4,10 +4,10 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-django = "*"
 pandas = "*"
 django-extensions = "*"
 plotly = "*"
+django = "*"
 
 [dev-packages]
 
