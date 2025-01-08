@@ -7,6 +7,7 @@ AquaTrack is a web application designed to analyze and monitor water quality tre
 - [Features](#features)
   - [Filter System](#filter-system)
   - [Anomalies Detection](#anomalies-detection)
+- [Project Video](#project-video)
 - [Dataset](#dataset)
 - [Why Water Quality Matters](#why-water-quality-matters)
 - [Future Prospects](#future-prospects)
@@ -32,6 +33,12 @@ AquaTrack offers a robust and user-friendly filter system that allows users to:
 The **Anomalies Detected** feature helps users spot unusual changes in water quality by providing:
 - Location and date of anomalies.
 - Water quality characteristics that may indicate potential issues.
+
+---
+
+## Project Video
+
+(Link)[https://youtu.be/uxkQomTASvo]
 
 ---
 
