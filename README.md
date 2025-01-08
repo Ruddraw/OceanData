@@ -38,7 +38,7 @@ The **Anomalies Detected** feature helps users spot unusual changes in water qua
 
 ## Project Video
 
-(Link)[https://youtu.be/uxkQomTASvo]
+[Link](https://youtu.be/uxkQomTASvo)
 
 ---
 
